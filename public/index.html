@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Animes em Português</title>
+</head>
+<body>
+  <h1>Animes disponíveis (legenda/dublagem PT-BR)</h1>
+  <ul id="list"></ul>
+  <script>
+    async function fetchAnimes() {
+      const res = await fetch('/api/animes');
+      const data = await res.json();
+      const list = document.getElementById('list');
+      data.forEach(anime => {
+        const li = document.createElement('li');
+        li.textContent = anime.title;
+        list.appendChild(li);
+      });
+    }
+    fetchAnimes();
+  </script>
+</body>
+</html>
