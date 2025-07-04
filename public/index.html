@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Animes em Português</title>
+  <meta charset="UTF-8" />
+  <title>Anime Sugoi</title>
 </head>
 <body>
-  <h1>Animes disponíveis (legenda/dublagem PT-BR)</h1>
-  <ul id="list"></ul>
+  <h1>Buscar episódio legendado</h1>
+  <input id="slug" placeholder="ex: naruto-classico" />
+  <input id="ep" placeholder="01" />
+  <button onclick="buscar()">Buscar</button>
+
+  <ul id="links"></ul>
+
   <script>
-    async function fetchAnimes() {
-      const res = await fetch('/api/animes');
+    async function buscar() {
+      const slug = document.getElementById('slug').value;
+      const ep = document.getElementById('ep').value;
+      const res = await fetch(`/api/episode?slug=${slug}&ep=${ep}`);
       const data = await res.json();
-      const list = document.getElementById('list');
-      data.forEach(anime => {
-        const li = document.createElement('li');
-        li.textContent = anime.title;
-        list.appendChild(li);
+      const ul = document.getElementById('links');
+      ul.innerHTML = '';
+
+      if (!data.cdn) {
+        ul.innerHTML = `<li>Erro: ${data.error || data.message || 'Não encontrado'}</li>`;
+        return;
+      }
+
+      data.cdn.forEach(host => {
+        host.links.forEach(link => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = link;
+          a.textContent = `${host.name} → ${link}`;
+          a.target = '_blank';
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
       });
     }
-    fetchAnimes();
   </script>
 </body>
 </html>
